@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import Productos from './pages/Productos.jsx'
 import Caja from './pages/Caja.jsx'
+import Reportes from './pages/Reportes.jsx'
 
 // Secciones de la app. Las que tienen listo: false se irán activando.
 const SECCIONES = [
   { id: 'caja', nombre: 'Caja', listo: true },
   { id: 'productos', nombre: 'Productos', listo: true },
-  { id: 'reportes', nombre: 'Reportes', listo: false },
+  { id: 'reportes', nombre: 'Reportes', listo: true },
 ]
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
       <main className="contenido">
         {seccion === 'caja' && <Caja />}
         {seccion === 'productos' && <Productos />}
+        {seccion === 'reportes' && <Reportes />}
       </main>
     </div>
   )

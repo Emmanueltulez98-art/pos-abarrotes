@@ -55,6 +55,20 @@ export async function ajustarExistencias(cambios) {
   return lista
 }
 
+// Agrega varios productos de golpe (usado por los datos de prueba)
+export async function importarProductos(nuevos) {
+  const lista = [...leer(), ...nuevos]
+  escribir(lista)
+  return lista
+}
+
+// Borra solo los productos de prueba
+export async function eliminarProductosDemo() {
+  const lista = leer().filter((p) => !p.demo)
+  escribir(lista)
+  return lista
+}
+
 // Elimina un producto por su id
 export async function eliminarProducto(id) {
   const lista = leer().filter((p) => p.id !== id)

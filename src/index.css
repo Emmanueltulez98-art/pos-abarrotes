@@ -169,3 +169,46 @@ button.enlace { border: none; background: none; color: var(--primario); text-dec
 .ventana.ticket hr { border: none; border-top: 1px dashed #bbb; width: 100%; margin: 0.2rem 0; }
 .linea-ticket { display: flex; justify-content: space-between; gap: 1rem; }
 .linea-ticket > div:last-child { white-space: nowrap; }
+
+/* ---------- Reportes ---------- */
+.periodos { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.periodos button.activo { background: var(--primario); border-color: var(--primario); color: #fff; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1rem; }
+.kpi { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.kpi span { font-size: 0.8rem; color: var(--suave); text-transform: uppercase; letter-spacing: 0.03em; }
+.kpi strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.kpi small { color: var(--suave); font-size: 0.75rem; }
+.kpi.destacado { border-color: #b6cffb; background: #f3f7ff; }
+.tarjeta { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.tarjeta h3 { margin: 0 0 0.8rem; font-size: 1rem; }
+.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.dos-columnas .tarjeta { margin-bottom: 1rem; }
+
+.grafica { display: flex; gap: 0.5rem; height: 220px; }
+.eje-y { display: flex; flex-direction: column; justify-content: space-between; font-size: 0.75rem; color: var(--suave); padding-bottom: 1.3rem; text-align: right; min-width: 3.5rem; }
+.area-barras { flex: 1; display: flex; gap: 2px; border-bottom: 1px solid var(--borde); position: relative; }
+.columna { flex: 1; display: flex; flex-direction: column; position: relative; cursor: default; }
+.pista { flex: 1; display: flex; align-items: flex-end; }
+.barra { width: 100%; background: var(--primario); border-radius: 4px 4px 0 0; min-height: 0; transition: background 0.1s; }
+.barra.resaltada { background: var(--primario-hover); }
+.etiqueta-x { height: 1.3rem; font-size: 0.7rem; color: var(--suave); text-align: center; padding-top: 0.25rem; }
+.tooltip {
+  position: absolute; bottom: calc(100% - 1rem); left: 50%; transform: translateX(-50%); z-index: 3;
+  background: #111827; color: #fff; padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.8rem; white-space: nowrap; pointer-events: none;
+}
+
+.ranking { display: flex; flex-direction: column; gap: 0.6rem; }
+.nombre-ranking { display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 0.2rem; }
+.linea-ranking { display: flex; align-items: center; gap: 0.6rem; }
+.linea-ranking strong { font-size: 0.85rem; min-width: 5.5rem; text-align: right; font-variant-numeric: tabular-nums; }
+.pista-h { flex: 1; height: 8px; background: #eef0f3; border-radius: 4px; }
+.barra-h { height: 100%; background: var(--primario); border-radius: 4px; }
+
+.tabla.compacta th, .tabla.compacta td { padding: 0.45rem 0.6rem; font-size: 0.88rem; }
+.tabla.compacta .estado { margin-left: 0.4rem; }
+.tabla tr.clicable { cursor: pointer; }
+.tabla tr.clicable:hover td { background: #f6f8fa; }
+.tabla tr.detalle td { background: #fafbfc; font-size: 0.82rem; }
+.pruebas { border-style: dashed; }
+.botones.izquierda { justify-content: flex-start; }
+.ok-texto { color: var(--ok); margin: 0.6rem 0 0; font-size: 0.9rem; }

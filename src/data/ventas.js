@@ -44,3 +44,20 @@ export async function registrarVenta({ partidas, total, pago, cambio }) {
   await ajustarExistencias(partidas.map((p) => ({ id: p.productoId, cantidad: -p.cantidad })))
   return venta
 }
+
+// Agrega varias ventas de golpe con folios consecutivos por fecha (datos de prueba)
+export async function importarVentas(nuevas) {
+  const ventas = leer()
+  let folio = ventas.reduce((max, v) => Math.max(max, v.folio), 0)
+  const ordenadas = [...nuevas].sort((a, b) => a.fecha.localeCompare(b.fecha))
+  for (const v of ordenadas) ventas.push({ ...v, folio: ++folio })
+  escribir(ventas)
+  return ventas
+}
+
+// Borra solo las ventas de prueba
+export async function eliminarVentasDemo() {
+  const ventas = leer().filter((v) => !v.demo)
+  escribir(ventas)
+  return ventas
+}
