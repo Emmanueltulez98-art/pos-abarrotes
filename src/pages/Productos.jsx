@@ -41,7 +41,9 @@ export default function Productos() {
 
   // Cargar productos al abrir la pantalla
   useEffect(() => {
-    obtenerProductos().then(setProductos)
+    obtenerProductos()
+      .then(setProductos)
+      .catch((e) => window.alert(`No se pudieron cargar los productos: ${e.message}`))
   }, [])
 
   // Lista filtrada por la búsqueda y ordenada por nombre
@@ -125,22 +127,30 @@ export default function Productos() {
       return setError('Ya existe otro producto con ese código de barras.')
     }
 
-    const lista = await guardarProducto({
-      ...form,
-      codigo,
-      nombre,
-      categoria: form.categoria.trim(),
-      precio,
-      existencia,
-      minimo,
-    })
-    setProductos(lista)
-    cerrar()
+    try {
+      const lista = await guardarProducto({
+        ...form,
+        codigo,
+        nombre,
+        categoria: form.categoria.trim(),
+        precio,
+        existencia,
+        minimo,
+      })
+      setProductos(lista)
+      cerrar()
+    } catch (err) {
+      setError(err.message)
+    }
   }
 
   async function alEliminar(p) {
     if (!window.confirm(`¿Eliminar "${p.nombre}"? Esta acción no se puede deshacer.`)) return
-    setProductos(await eliminarProducto(p.id))
+    try {
+      setProductos(await eliminarProducto(p.id))
+    } catch (err) {
+      window.alert(`No se pudo eliminar: ${err.message}`)
+    }
   }
 
   const esGranel = form?.unidad === 'kg'

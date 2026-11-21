@@ -212,3 +212,12 @@ button.enlace { border: none; background: none; color: var(--primario); text-dec
 .pruebas { border-style: dashed; }
 .botones.izquierda { justify-content: flex-start; }
 .ok-texto { color: var(--ok); margin: 0.6rem 0 0; font-size: 0.9rem; }
+
+/* ---------- Acceso ---------- */
+.acceso { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.acceso .ventana { max-width: 400px; }
+.marca-acceso { font-weight: 700; font-size: 1.2rem; text-align: center; }
+.marca-acceso span { font-weight: 400; color: var(--suave); }
+.usuario { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: #9ca3af; }
+.usuario button { background: transparent; color: #d1d5db; border-color: #374151; padding: 0.3rem 0.7rem; }
+code { background: #f1f3f5; padding: 0.05rem 0.3rem; border-radius: 4px; font-size: 0.9em; }

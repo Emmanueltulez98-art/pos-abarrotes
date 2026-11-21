@@ -1,77 +1,82 @@
-// Capa de datos de productos.
-// Por ahora guarda todo en el navegador (localStorage).
-// Más adelante cambiaremos SOLO este archivo para usar Supabase;
-// las pantallas no tendrán que cambiar.
+// Capa de datos de productos (Supabase).
+// Las pantallas solo usan estas funciones; no saben dónde se guardan los datos.
+import { supabase } from '../lib/supabase.js'
+import { tiendaId } from './sesion.js'
 
-const CLAVE = 'pos-abarrotes:productos'
-
-function leer() {
-  try {
-    const texto = localStorage.getItem(CLAVE)
-    return texto ? JSON.parse(texto) : []
-  } catch {
-    return []
+// Fila de la base de datos -> objeto que usa la app
+function aProducto(r) {
+  return {
+    id: r.id,
+    codigo: r.codigo || '',
+    nombre: r.nombre,
+    categoria: r.categoria || '',
+    unidad: r.unidad,
+    precio: Number(r.precio),
+    existencia: Number(r.existencia),
+    minimo: Number(r.minimo),
+    demo: r.demo,
   }
 }
 
-function escribir(lista) {
-  try {
-    localStorage.setItem(CLAVE, JSON.stringify(lista))
-  } catch (error) {
-    console.error('No se pudieron guardar los productos', error)
+// Objeto de la app -> columnas de la base de datos
+function aFila(p) {
+  return {
+    codigo: p.codigo || null,
+    nombre: p.nombre,
+    categoria: p.categoria || null,
+    unidad: p.unidad,
+    precio: p.precio,
+    existencia: p.existencia || 0,
+    minimo: p.minimo || 0,
   }
 }
 
-// Devuelve la lista completa de productos
+function traducirError(e) {
+  if (e.code === '23505') return new Error('Ya existe otro producto con ese código de barras.')
+  return new Error(e.message)
+}
+
 export async function obtenerProductos() {
-  return leer()
+  const { data, error } = await supabase
+    .from('productos')
+    .select('*')
+    .eq('tienda_id', tiendaId())
+    .order('nombre')
+    .range(0, 4999)
+  if (error) throw traducirError(error)
+  return data.map(aProducto)
 }
 
 // Crea un producto nuevo (si no tiene id) o actualiza uno existente
 export async function guardarProducto(producto) {
-  const lista = leer()
-  if (producto.id) {
-    const i = lista.findIndex((p) => p.id === producto.id)
-    if (i >= 0) lista[i] = { ...producto, actualizado: new Date().toISOString() }
-  } else {
-    lista.push({
-      ...producto,
-      id: crypto.randomUUID(),
-      creado: new Date().toISOString(),
-    })
-  }
-  escribir(lista)
-  return lista
+  const fila = { ...aFila(producto), tienda_id: tiendaId() }
+  const { error } = producto.id
+    ? await supabase
+        .from('productos')
+        .update({ ...fila, actualizado: new Date().toISOString() })
+        .eq('id', producto.id)
+    : await supabase.from('productos').insert(fila)
+  if (error) throw traducirError(error)
+  return obtenerProductos()
 }
 
-// Suma o resta existencias. cambios = [{ id, cantidad }] (cantidad negativa = salida)
-export async function ajustarExistencias(cambios) {
-  const lista = leer()
-  for (const c of cambios) {
-    const p = lista.find((x) => x.id === c.id)
-    if (p) p.existencia = Math.round((Number(p.existencia) + c.cantidad) * 1000) / 1000
-  }
-  escribir(lista)
-  return lista
+export async function eliminarProducto(id) {
+  const { error } = await supabase.from('productos').delete().eq('id', id)
+  if (error) throw traducirError(error)
+  return obtenerProductos()
 }
 
-// Agrega varios productos de golpe (usado por los datos de prueba)
+// Agrega varios productos de golpe (datos de prueba)
 export async function importarProductos(nuevos) {
-  const lista = [...leer(), ...nuevos]
-  escribir(lista)
-  return lista
+  const t = tiendaId()
+  const filas = nuevos.map((p) => ({ ...aFila(p), id: p.id, demo: !!p.demo, tienda_id: t }))
+  const { error } = await supabase.from('productos').insert(filas)
+  if (error) throw traducirError(error)
+  return obtenerProductos()
 }
 
 // Borra solo los productos de prueba
 export async function eliminarProductosDemo() {
-  const lista = leer().filter((p) => !p.demo)
-  escribir(lista)
-  return lista
-}
-
-// Elimina un producto por su id
-export async function eliminarProducto(id) {
-  const lista = leer().filter((p) => p.id !== id)
-  escribir(lista)
-  return lista
+  const { error } = await supabase.from('productos').delete().eq('tienda_id', tiendaId()).eq('demo', true)
+  if (error) throw traducirError(error)
 }

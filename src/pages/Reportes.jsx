@@ -37,14 +37,24 @@ export default function Reportes() {
   const [abierta, setAbierta] = useState(null)
   const [mensaje, setMensaje] = useState('')
 
+  const [cargando, setCargando] = useState(false)
+
   async function recargar() {
-    setProductos(await obtenerProductos())
-    setVentas(await obtenerVentas())
+    const [desde, hasta] = rango(periodo)
+    setCargando(true)
+    try {
+      setProductos(await obtenerProductos())
+      setVentas(await obtenerVentas({ desde, hasta }))
+    } catch (e) {
+      setMensaje(`No se pudieron cargar los datos: ${e.message}`)
+    } finally {
+      setCargando(false)
+    }
   }
 
   useEffect(() => {
     recargar()
-  }, [])
+  }, [periodo]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const [inicio, fin] = rango(periodo)
   const unDia = periodo === 'hoy' || periodo === 'ayer'
@@ -119,13 +129,22 @@ export default function Reportes() {
   const promedio = numVentas ? datos.total / numVentas : 0
 
   async function alCargarDemo() {
-    setMensaje(await cargarDatosDemo())
+    setMensaje('Cargando datos de prueba…')
+    try {
+      setMensaje(await cargarDatosDemo())
+    } catch (e) {
+      setMensaje(`Error: ${e.message}`)
+    }
     await recargar()
   }
 
   async function alBorrarDemo() {
     if (!window.confirm('¿Borrar todos los productos y ventas de prueba? Tus datos reales no se tocan.')) return
-    setMensaje(await borrarDatosDemo())
+    try {
+      setMensaje(await borrarDatosDemo())
+    } catch (e) {
+      setMensaje(`Error: ${e.message}`)
+    }
     await recargar()
   }
 
@@ -137,6 +156,7 @@ export default function Reportes() {
           <p className="sub">
             {inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'long' })}
             {!unDia && ` – ${new Date(fin - 1).toLocaleDateString('es-MX', { day: 'numeric', month: 'long' })}`}
+            {cargando && ' · Cargando…'}
           </p>
         </div>
         <div className="periodos">

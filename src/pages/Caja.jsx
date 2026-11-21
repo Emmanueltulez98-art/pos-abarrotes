@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { obtenerProductos } from '../data/productos.js'
 import { registrarVenta } from '../data/ventas.js'
+import { nombreTienda } from '../data/sesion.js'
 
 const dinero = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' })
 const redondear = (n) => Math.round(n * 100) / 100
@@ -38,10 +39,13 @@ export default function Caja() {
   const [granel, setGranel] = useState(null) // { producto, modo: 'kg'|'dinero', valor, indice }
   const [cobro, setCobro] = useState(null) // { pago }
   const [ticket, setTicket] = useState(null)
+  const [guardando, setGuardando] = useState(false)
   const entradaRef = useRef(null)
 
   useEffect(() => {
-    obtenerProductos().then(setProductos)
+    obtenerProductos()
+      .then(setProductos)
+      .catch((e) => setAviso(`No se pudieron cargar los productos: ${e.message}`))
   }, [])
 
   const total = redondear(carrito.reduce((s, p) => s + p.importe, 0))
@@ -168,15 +172,18 @@ export default function Caja() {
     e.preventDefault()
     const pago = Number(cobro.pago)
     if (!(pago >= total)) return
-    const venta = await registrarVenta({
-      partidas: carrito,
-      total,
-      pago,
-      cambio: redondear(pago - total),
-    })
-    setCobro(null)
-    setTicket(venta)
-    setProductos(await obtenerProductos())
+    if (guardando) return
+    setGuardando(true)
+    try {
+      const venta = await registrarVenta({ partidas: carrito, pago })
+      setCobro(null)
+      setTicket(venta)
+      setProductos(await obtenerProductos())
+    } catch (err) {
+      window.alert(`No se pudo registrar la venta: ${err.message}`)
+    } finally {
+      setGuardando(false)
+    }
   }
 
   function nuevaVenta() {
@@ -436,8 +443,8 @@ export default function Caja() {
               <button type="button" onClick={cerrarCobro}>
                 Regresar
               </button>
-              <button type="submit" className="primario" disabled={!alcanza}>
-                Confirmar venta
+              <button type="submit" className="primario" disabled={!alcanza || guardando}>
+                {guardando ? 'Guardando…' : 'Confirmar venta'}
               </button>
             </div>
           </form>
@@ -449,7 +456,7 @@ export default function Caja() {
         <div className="fondo">
           <div className="ventana ticket">
             <div className="centro">
-              <strong>ABARROTES</strong>
+              <strong>{nombreTienda().toUpperCase()}</strong>
               <div className="sub">Folio #{String(ticket.folio).padStart(5, '0')}</div>
               <div className="sub">{new Date(ticket.fecha).toLocaleString('es-MX')}</div>
             </div>
