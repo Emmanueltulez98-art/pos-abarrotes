@@ -6,10 +6,12 @@ import Acceso, { CrearTienda } from './pages/Acceso.jsx'
 import Productos from './pages/Productos.jsx'
 import Caja from './pages/Caja.jsx'
 import Reportes from './pages/Reportes.jsx'
+import Entradas from './pages/Entradas.jsx'
 
 const SECCIONES = [
   { id: 'caja', nombre: 'Caja' },
   { id: 'productos', nombre: 'Productos' },
+  { id: 'entradas', nombre: 'Entradas' },
   { id: 'reportes', nombre: 'Reportes' },
 ]
 
@@ -117,6 +119,7 @@ export default function App() {
       <main className="contenido">
         {seccion === 'caja' && <Caja />}
         {seccion === 'productos' && <Productos />}
+        {seccion === 'entradas' && <Entradas />}
         {seccion === 'reportes' && <Reportes />}
       </main>
     </div>

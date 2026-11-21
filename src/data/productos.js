@@ -14,6 +14,7 @@ function aProducto(r) {
     precio: Number(r.precio),
     existencia: Number(r.existencia),
     minimo: Number(r.minimo),
+    costo: r.costo === null || r.costo === undefined ? null : Number(r.costo),
     demo: r.demo,
   }
 }
