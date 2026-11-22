@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase, configurado, diagnostico } from './lib/supabase.js'
 import { setTienda } from './data/sesion.js'
 import { obtenerMiTienda, crearTienda } from './data/tienda.js'
-import Acceso, { CrearTienda } from './pages/Acceso.jsx'
+import Acceso, { CrearTienda, NuevaContrasena } from './pages/Acceso.jsx'
 import Productos from './pages/Productos.jsx'
 import Caja from './pages/Caja.jsx'
 import Reportes from './pages/Reportes.jsx'
@@ -21,11 +21,15 @@ export default function App() {
   const [tienda, setTiendaActual] = useState(null)
   const [error, setError] = useState('')
   const [seccion, setSeccion] = useState('caja')
+  const [recuperando, setRecuperando] = useState(false) // true al abrir el enlace de recuperación
 
   // Escuchar si el usuario entra o sale
   useEffect(() => {
     if (!configurado) return
-    const { data } = supabase.auth.onAuthStateChange((_evento, s) => setSesion(s))
+    const { data } = supabase.auth.onAuthStateChange((evento, s) => {
+      setSesion(s)
+      if (evento === 'PASSWORD_RECOVERY') setRecuperando(true)
+    })
     return () => data.subscription.unsubscribe()
   }, [])
 
@@ -105,6 +109,7 @@ export default function App() {
       </div>
     )
   }
+  if (recuperando) return <NuevaContrasena alTerminar={() => setRecuperando(false)} />
   if (estado === 'cargando') return <div className="acceso"><p className="sub">Cargando…</p></div>
   if (estado === 'error') {
     return (

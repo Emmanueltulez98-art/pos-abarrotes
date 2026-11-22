@@ -225,3 +225,4 @@ code { background: #f1f3f5; padding: 0.05rem 0.3rem; border-radius: 4px; font-si
 /* ---------- Entradas ---------- */
 .input-chico { width: 6.5rem; text-align: right; padding: 0.35rem 0.5rem; }
 .caja-der label.campo { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; font-weight: 600; }
+button.enlace.derecha { align-self: flex-end; font-size: 0.85rem; margin-top: -0.4rem; }
