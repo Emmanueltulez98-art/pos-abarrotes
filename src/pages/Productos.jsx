@@ -187,7 +187,7 @@ export default function Productos() {
             : 'Ningún producto coincide con la búsqueda.'}
         </div>
       ) : (
-        <table className="tabla">
+        <table className="tabla tarjetas">
           <thead>
             <tr>
               <th>Código</th>
@@ -204,18 +204,18 @@ export default function Productos() {
               const est = estado(p)
               return (
                 <tr key={p.id}>
-                  <td className="codigo">{p.codigo || '—'}</td>
-                  <td>
+                  <td className="codigo" data-label="Código">{p.codigo || '—'}</td>
+                  <td className="celda-titulo">
                     {p.nombre}
                     {p.unidad === 'kg' && <span className="etiqueta">granel</span>}
                   </td>
-                  <td>{p.categoria || '—'}</td>
-                  <td className="num">
+                  <td data-label="Categoría">{p.categoria || '—'}</td>
+                  <td className="num" data-label="Precio">
                     {dinero.format(p.precio)}
                     <span className="unidad">{p.unidad === 'kg' ? ' /kg' : ' c/u'}</span>
                   </td>
-                  <td className="num">{formatoCantidad(p.existencia, p.unidad)}</td>
-                  <td>
+                  <td className="num" data-label="Existencia">{formatoCantidad(p.existencia, p.unidad)}</td>
+                  <td data-label="Estado">
                     <span className={`estado ${est.clase}`}>{est.texto}</span>
                   </td>
                   <td className="acciones">

@@ -257,7 +257,7 @@ export default function Entradas() {
               Escanea los productos que llegaron. Si un código no está registrado, podrás darlo de alta aquí mismo.
             </div>
           ) : (
-            <table className="tabla">
+            <table className="tabla tarjetas">
               <thead>
                 <tr>
                   <th>Producto</th>
@@ -273,12 +273,12 @@ export default function Entradas() {
                   const p = partidas[i]
                   return (
                     <tr key={x.producto.id}>
-                      <td>
+                      <td className="celda-titulo">
                         {x.producto.nombre}
                         {x.producto.unidad === 'kg' && <span className="etiqueta">granel</span>}
                       </td>
-                      <td className="num unidad">{formatoCantidad(x.producto.existencia, x.producto.unidad)}</td>
-                      <td className="num">
+                      <td className="num unidad" data-label="Hay">{formatoCantidad(x.producto.existencia, x.producto.unidad)}</td>
+                      <td className="num" data-label="Llegaron">
                         <input
                           ref={(el) => (cantidadRefs.current[x.producto.id] = el)}
                           className="input-chico"
@@ -291,7 +291,7 @@ export default function Entradas() {
                           onKeyDown={(e) => e.key === 'Enter' && enfocar()}
                         />
                       </td>
-                      <td className="num">
+                      <td className="num" data-label="Costo unitario">
                         <input
                           className="input-chico"
                           type="number"
@@ -303,8 +303,8 @@ export default function Entradas() {
                           onKeyDown={(e) => e.key === 'Enter' && enfocar()}
                         />
                       </td>
-                      <td className="num">{p.importe === null || isNaN(p.importe) ? '—' : dinero.format(p.importe)}</td>
-                      <td className="acciones">
+                      <td className="num" data-label="Importe">{p.importe === null || isNaN(p.importe) ? '—' : dinero.format(p.importe)}</td>
+                      <td className="acciones esquina">
                         <button className="peligro" onClick={() => quitar(i)} title="Quitar">
                           ✕
                         </button>

@@ -7,13 +7,14 @@ import Productos from './pages/Productos.jsx'
 import Caja from './pages/Caja.jsx'
 import Reportes from './pages/Reportes.jsx'
 import Entradas from './pages/Entradas.jsx'
+import Icono from './components/Icono.jsx'
 
 const SECCIONES = [
   { id: 'caja', nombre: 'Caja' },
   { id: 'productos', nombre: 'Productos' },
   { id: 'entradas', nombre: 'Entradas' },
   { id: 'reportes', nombre: 'Reportes' },
-]
+] // el id también es el nombre del ícono
 
 export default function App() {
   const [sesion, setSesion] = useState(undefined) // undefined = aún no sabemos
@@ -125,22 +126,39 @@ export default function App() {
   if (estado === 'acceso') return <Acceso />
   if (estado === 'crear-tienda') return <CrearTienda alCrear={alCrearTienda} alSalir={salir} />
 
+  const botonesNav = SECCIONES.map((s) => (
+    <button
+      key={s.id}
+      className={seccion === s.id ? 'activo' : ''}
+      onClick={() => {
+        setSeccion(s.id)
+        window.scrollTo(0, 0)
+      }}
+    >
+      <Icono nombre={s.id} />
+      <span>{s.nombre}</span>
+    </button>
+  ))
+
   return (
     <div className="app">
       <header className="barra">
         <div className="marca">
-          {tienda?.nombre} <span>Punto de Venta</span>
+          <span className="marca-logo">
+            <Icono nombre="tienda" tam={18} />
+          </span>
+          <div className="marca-texto">
+            <strong>{tienda?.nombre}</strong>
+            <small>Punto de venta</small>
+          </div>
         </div>
-        <nav>
-          {SECCIONES.map((s) => (
-            <button key={s.id} className={seccion === s.id ? 'activo' : ''} onClick={() => setSeccion(s.id)}>
-              {s.nombre}
-            </button>
-          ))}
-        </nav>
+        <nav className="nav-superior">{botonesNav}</nav>
         <div className="usuario">
-          <span>{sesion?.user?.email}</span>
-          <button onClick={salir}>Salir</button>
+          <span className="solo-escritorio">{sesion?.user?.email}</span>
+          <button onClick={salir} title="Salir">
+            <Icono nombre="salir" tam={18} />
+            <span className="solo-escritorio">Salir</span>
+          </button>
         </div>
       </header>
 
@@ -150,6 +168,8 @@ export default function App() {
         {seccion === 'entradas' && <Entradas />}
         {seccion === 'reportes' && <Reportes />}
       </main>
+
+      <nav className="nav-inferior">{botonesNav}</nav>
     </div>
   )
 }

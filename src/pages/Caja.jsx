@@ -261,7 +261,7 @@ export default function Caja() {
         {carrito.length === 0 ? (
           <div className="vacio">Escanea un producto para empezar la venta.</div>
         ) : (
-          <table className="tabla">
+          <table className="tabla tarjetas">
             <thead>
               <tr>
                 <th>Producto</th>
@@ -277,7 +277,7 @@ export default function Caja() {
                 const noAlcanza = prod && enCarrito[p.productoId] > Number(prod.existencia)
                 return (
                   <tr key={i}>
-                    <td>
+                    <td className="celda-titulo">
                       {p.nombre}
                       {noAlcanza && (
                         <div className="advertencia">
@@ -285,11 +285,11 @@ export default function Caja() {
                         </div>
                       )}
                     </td>
-                    <td className="num">
+                    <td className="num" data-label="Precio">
                       {dinero.format(p.precio)}
                       <span className="unidad">{p.unidad === 'kg' ? ' /kg' : ''}</span>
                     </td>
-                    <td className="centro">
+                    <td className="centro" data-label="Cantidad">
                       {p.unidad === 'kg' ? (
                         <button className="enlace" onClick={() => editarGranel(i)} title="Cambiar cantidad">
                           {formatoKg(p.cantidad)}
@@ -302,10 +302,10 @@ export default function Caja() {
                         </span>
                       )}
                     </td>
-                    <td className="num">
+                    <td className="num" data-label="Importe">
                       <strong>{dinero.format(p.importe)}</strong>
                     </td>
-                    <td className="acciones">
+                    <td className="acciones esquina">
                       <button className="peligro" onClick={() => quitar(i)} title="Quitar">
                         ✕
                       </button>
@@ -318,14 +318,14 @@ export default function Caja() {
         )}
       </div>
 
-      <aside className="caja-der">
+      <aside className="caja-der barra-cobro">
         <div className="total-etiqueta">Total</div>
         <div className="total">{dinero.format(total)}</div>
         <div className="sub">
           {articulos} {articulos === 1 ? 'artículo' : 'artículos'}
         </div>
         <button className="primario grande" disabled={!carrito.length} onClick={abrirCobro}>
-          Cobrar <small>(F2)</small>
+          Cobrar <small className="solo-escritorio">(F2)</small>
         </button>
         <button disabled={!carrito.length} onClick={cancelarVenta}>
           Cancelar venta
