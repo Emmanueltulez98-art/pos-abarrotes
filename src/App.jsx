@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase, configurado } from './lib/supabase.js'
+import { supabase, configurado, diagnostico } from './lib/supabase.js'
 import { setTienda } from './data/sesion.js'
 import { obtenerMiTienda, crearTienda } from './data/tienda.js'
 import Acceso, { CrearTienda } from './pages/Acceso.jsx'
@@ -69,15 +69,38 @@ export default function App() {
   const salir = () => supabase.auth.signOut()
 
   if (estado === 'sin-config') {
+    const enLinea = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
     return (
       <div className="acceso">
         <div className="ventana">
           <h2>Falta conectar Supabase</h2>
-          <p>
-            No encontré los datos en el archivo <code>.env.local</code>. Revisa que exista en la carpeta
-            <code> pos-abarrotes</code>, que tenga <code>VITE_SUPABASE_URL</code> y <code>VITE_SUPABASE_ANON_KEY</code>,
-            y después detén la app (Ctrl + C) y vuelve a correr <code>npm run dev</code>.
-          </p>
+          <table className="tabla compacta">
+            <tbody>
+              <tr>
+                <td><code>VITE_SUPABASE_URL</code></td>
+                <td className={diagnostico.url === 'ok' ? 'ok-texto' : 'error'}>
+                  {diagnostico.url === 'ok' ? `OK (${diagnostico.inicioUrl})` : diagnostico.url}
+                </td>
+              </tr>
+              <tr>
+                <td><code>VITE_SUPABASE_ANON_KEY</code></td>
+                <td className={diagnostico.llave === 'ok' ? 'ok-texto' : 'error'}>
+                  {diagnostico.llave === 'ok' ? 'OK' : diagnostico.llave}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {enLinea ? (
+            <p className="sub">
+              Estás en la versión publicada. Revisa estos nombres en Netlify → Site configuration → Environment
+              variables, y luego en Deploys usa "Trigger deploy → Clear cache and deploy site".
+            </p>
+          ) : (
+            <p className="sub">
+              Estás en tu computadora. Revisa el archivo <code>.env.local</code> en la carpeta <code>pos-abarrotes</code>,
+              y después detén la app (Ctrl + C) y vuelve a correr <code>npm run dev</code>.
+            </p>
+          )}
         </div>
       </div>
     )
